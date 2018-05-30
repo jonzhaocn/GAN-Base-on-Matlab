@@ -6,22 +6,8 @@ function net = nn_setup(net)
     for l = 2 : numel(net.layers)  
         if strcmp(net.layers{l}.type, 'conv2d')
             % stride should be 1,and filter size should be odd
-            net.layers{l}.input_shape =  net.layers{l-1}.output_shape;
-            input_shape = net.layers{l}.input_shape;
-            if numel(input_shape)==3
-                input_maps = 1;
-            elseif numel(input_shape)==4
-                input_maps = input_shape(end);
-            else
-                error('sss')
-            end
-            net.layers{l} = check_conv2d_layer(net.layers{l});
-            net.layers{l}.filter = normrnd(0, 0.02, net.layers{l}.kernel_size, net.layers{l}.kernel_size, input_maps, net.layers{l}.output_maps);
-            net.layers{l}.biases = normrnd(0, 0.02, 1, net.layers{l}.output_maps);
-            net.layers{l}.filter_m = 0;
-            net.layers{l}.filter_v = 0;
-            net.layers{l}.biases_m = 0;
-            net.layers{l}.biases_v = 0;
+            net.layers{l} = setup_conv2d_layer(net.layers{l-1}.output_shape, net.layers{l});
+            
         elseif strcmp(net.layers{l}.type, 'sub_sampling')
             net.layers{l}.input_shape = net.layers{l-1}.output_shape;
             net.layers{l}.output_shape = net.layers{l}.input_shape;
@@ -48,41 +34,12 @@ function net = nn_setup(net)
             end
         % -------------- conv transpose
         elseif strcmp(net.layers{l}.type, 'conv2d_transpose')
-            net.layers{l}.input_shape =  net.layers{l-1}.output_shape;
-            input_shape = net.layers{l}.input_shape;
-            if numel(input_shape)==3
-                input_maps = 1;
-            elseif numel(input_shape)==4
-                input_maps = input_shape(end);
-            else
-                error('sss')
-            end
-            kernel_size = net.layers{l}.kernel_size;
-            output_shape = net.layers{l}.output_shape;
-            net.layers{l} = check_conv2d_transpose_layer(net.layers{l});
-            net.layers{l}.filter = normrnd(0, 0.02, kernel_size, kernel_size, input_maps, output_shape(end));
-            net.layers{l}.biases = normrnd(0, 0.02, 1, output_shape(end));
-            net.layers{l}.filter_m = 0;
-            net.layers{l}.filter_v = 0;
-            net.layers{l}.biases_m = 0;
-            net.layers{l}.biases_v = 0;
+           net.layers{l} = setup_conv2d_transpose_layer(net.layers{l-1}.output_shape, net.layers{l});
         % ---------- atrous conv2d
         elseif strcmp(net.layers{l}.type, 'atrous_conv2d')
-            net.layers{l}.input_shape =  net.layers{l-1}.output_shape;
-            input_shape = net.layers{l}.input_shape;
-            if numel(input_shape)==3
-                input_maps = 1;
-            elseif numel(input_shape)==4
-                input_maps = input_shape(end);
-            else
-                error('sss')
-            end
-            net.layers{l}.filter = normrnd(0, 0.02, net.layers{l}.kernel_size, net.layers{l}.kernel_size, input_maps, net.layers{l}.output_maps);
-            net.layers{l}.biases = normrnd(0, 0.02, 1, net.layers{l}.output_maps);
-            net.layers{l}.filter_m = 0;
-            net.layers{l}.filter_v = 0;
-            net.layers{l}.biases_m = 0;
-            net.layers{l}.biases_v = 0;
+            net.layers{l} = setup_atrous_conv2d_layer(net.layers{l-1}.output_shape, net.layers{l});
+        else
+            error('error layer type')
         end
     end
 end

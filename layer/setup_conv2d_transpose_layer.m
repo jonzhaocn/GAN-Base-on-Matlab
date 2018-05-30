@@ -1,12 +1,15 @@
-function layer = check_conv2d_transpose_layer(layer)
+function layer = setup_conv2d_transpose_layer(input_shape, layer)
     % ----------init-------------
-    in_height = layer.input_shape(2);
-    in_width = layer.input_shape(3);
-    out_height = layer.output_shape(2);
-    out_width = layer.output_shape(3);
+    layer.input_shape = input_shape;
+    output_shape = layer.output_shape;
+    
+    in_height = input_shape(2);
+    in_width = input_shape(3);
+    out_height = output_shape(2);
+    out_width = output_shape(3);
     stride = layer.stride;
     kernel_size = layer.kernel_size;
-    % --------calculate-----------
+    % --------check-----------
     if strcmp(layer.padding, 'valid')
         if stride == 1
             % valid,stride=1 => full
@@ -82,4 +85,19 @@ function layer = check_conv2d_transpose_layer(layer)
     else
         error('padding of conv2_transpose:only support valid or same');
     end
+    % ----- setting
+    if numel(input_shape)==3
+        input_maps = 1;
+    elseif numel(input_shape)==4
+        input_maps = input_shape(end);
+    else
+        error('error input_shape in conv2d transpose layer')
+    end
+    
+    layer.filter = normrnd(0, 0.02, kernel_size, kernel_size, input_maps, output_shape(end));
+    layer.biases = normrnd(0, 0.02, 1, output_shape(end));
+    layer.filter_m = 0;
+    layer.filter_v = 0;
+    layer.biases_m = 0;
+    layer.biases_v = 0;
 end
