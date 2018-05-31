@@ -10,12 +10,12 @@ batch_size = 60;
 % ----------- model
 generator.layers = {
     struct('type', 'input', 'output_shape', [batch_size, 100]) 
-    struct('type', 'fully_connect', 'output_shape', [batch_size, 28*28*3], 'activation', 'leaky_relu') 
-    struct('type', 'reshape', 'output_shape', [batch_size, 28, 28, 3])
-    %struct('type', 'conv2d', 'kernel_size', 5, 'stride', 1 , 'output_maps', 2, 'padding', 'same', 'activation', 'leaky_relu')
-    struct('type', 'atrous_conv2d', 'kernel_size', 5, 'rate', 2 , 'output_maps', 1, 'padding', 'valid', 'activation', 'leaky_relu')
-    struct('type', 'reshape', 'output_shape', [batch_size, 20*20])
-    struct('type', 'fully_connect', 'output_shape', [batch_size, 28*28], 'activation', 'leaky_relu')
+    struct('type', 'fully_connect', 'output_shape', [batch_size, 14*14*3], 'activation', 'leaky_relu') 
+    struct('type', 'reshape', 'output_shape', [batch_size, 14, 14, 3])
+%     struct('type', 'conv2d', 'kernel_size', 5, 'stride', 1 , 'output_maps', 1, 'padding', 'same', 'activation', 'leaky_relu')
+    struct('type', 'conv2d_transpose', 'kernel_size', 5, 'output_shape', [batch_size, 28, 28, 1], 'stride', 2, 'padding', 'same', 'activation', 'leaky_relu')
+    struct('type', 'reshape', 'output_shape', [batch_size, 28*28])
+    struct('type', 'fully_connect', 'output_shape', [batch_size, 28*28], 'activation', 'tanh')
 };
 discriminator.layers = {
     struct('type', 'input', 'output_shape', [batch_size, 28*28]) %reshape

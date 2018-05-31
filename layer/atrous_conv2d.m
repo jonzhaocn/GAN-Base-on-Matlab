@@ -13,7 +13,7 @@ function output = atrous_conv2d(input, layer)
         p_left = floor(size(filter,2)/2);
         input = padding_height_width_in_array(input, p_top, p_top, p_left, p_left);
     else
-        error('padding should be valid or same');
+        error('padding of atours conv2d should be valid or same');
     end
     output = zeros(out_height, out_width, batch_size, out_channel);
     % after permuting, input become [height, width, in_channel, batch_size]

@@ -40,10 +40,10 @@ function output = conv2d_transpose(input, layer)
             input = padding_height_width_in_array(input, p_top, p_top+a_p_bottom, p_left, p_left+a_p_right);
         end
     else
-        error('padding should be same or valid')
+        error('padding of conv2d transpose should be same or valid')
     end
     
-    % permuter之后的input为[height,width,batch_size,channel]
+    % after been permuter input become [height,width,batch_size,channel]
     input = permute(input,[2,3,4,1]);
     output = zeros(out_height, out_width, batch_size, out_channel);
     for jj=1:out_channel

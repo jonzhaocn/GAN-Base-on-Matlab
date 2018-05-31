@@ -16,7 +16,7 @@ function output = conv2d(input, filter, padding)
        p_left = floor(filter_width/2);
        input = padding_height_width_in_array(input, p_top, p_top, p_left, p_left);
    else
-       error('padding should be same or valid');
+       error('padding of conv2d should be same or valid');
    end
    
    output = zeros(out_height, out_width, batch_size, out_channel);
