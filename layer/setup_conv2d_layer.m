@@ -1,6 +1,6 @@
 function layer = setup_conv2d_layer(input_shape, layer)
     % ---------check------------
-    required_fields = {'type', 'kernel_size', 'stride', 'output_maps', 'padding'};
+    required_fields = {'type', 'kernel_size', 'output_maps', 'padding'};
     optional_fields = {'activation'};
     check_layer_field_names(layer, required_fields, optional_fields);
     % -------- init --------------

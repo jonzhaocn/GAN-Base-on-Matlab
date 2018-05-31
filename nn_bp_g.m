@@ -12,11 +12,10 @@ function generator = nn_bp_g(generator, discriminator)
             generator.layers{l}.d = get_error_term_from_conv2d_layer(back_layer);
         % -------------- fully connect
         elseif strcmp(back_layer.type, 'fully_connect')
-            generator.layers{l}.d = back_layer.d * back_layer.weights';
+            generator.layers{l}.d = get_error_term_from_fully_connect_layer(back_layer);
         % --------------reshape
         elseif strcmp(back_layer.type, 'reshape')
-            d = back_layer.d;
-            generator.layers{l}.d = reshape(d, [size(d, 1) ,back_layer.input_shape(2:end)]);
+            generator.layers{l}.d = get_error_term_from_reshape_layer(back_layer);
         % --------------conv transpose
         elseif strcmp(back_layer.type, 'conv2d_transpose')
             generator.layers{l}.d = get_error_term_from_conv2d_transpose_layer(back_layer);
@@ -31,29 +30,29 @@ function generator = nn_bp_g(generator, discriminator)
     end
     %% calculate every layer's gradient
     for l = 2:n
+        front_a = generator.layers{l-1}.a;
         % ---------conv
         if strcmp(generator.layers{l}.type, 'conv2d')
-            [dfilter, dbiases] = calculate_gradient_for_conv2d_layer(generator.layers{l-1}.a, generator.layers{l});
+            [dfilter, dbiases] = calculate_gradient_for_conv2d_layer(front_a, generator.layers{l});
             generator.layers{l}.dfilter = dfilter;
             generator.layers{l}.dbiases = dbiases;
         % ---------fully connect
         elseif strcmp(generator.layers{l}.type, 'fully_connect')
-            d = generator.layers{l}.d;
-            a = generator.layers{l-1}.a;
-            generator.layers{l}.dweights = a'*d / size(d, 1);
-            generator.layers{l}.dbiases = mean(d, 1);
+            [dweights, dbiases] = calculate_gradient_for_fully_connect_layer(front_a, generator.layers{l});
+            generator.layers{l}.dweights = dweights;
+            generator.layers{l}.dbiases = dbiases;
         % ----------reshape
         elseif strcmp(generator.layers{l}.type, 'reshape')
             continue;
         % ---------conv transpose
         elseif strcmp(generator.layers{l}.type, 'conv2d_transpose')
-            [dfilter, dbiases] = calculate_gradient_for_conv2d_transpose_layer(generator.layers{l-1}.a, generator.layers{l});
+            [dfilter, dbiases] = calculate_gradient_for_conv2d_transpose_layer(front_a, generator.layers{l});
             generator.layers{l}.dfilter = dfilter;
             generator.layers{l}.dbiases = dbiases;
         elseif strcmp(generator.layers{l}.type, 'sub_sampling')
             continue
         elseif strcmp(generator.layers{l}.type, 'atrous_conv2d')
-            [dfilter, dbiases] = calculate_gradient_for_atrous_conv2d_layer(generator.layers{l-1}.a, generator.layers{l});
+            [dfilter, dbiases] = calculate_gradient_for_atrous_conv2d_layer(front_a, generator.layers{l});
             generator.layers{l}.dfilter = dfilter;
             generator.layers{l}.dbiases = dbiases;
         else

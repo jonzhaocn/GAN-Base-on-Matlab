@@ -13,16 +13,17 @@ function net = nn_bp_d(net, logits, labels)
             net.layers{l}.d = get_error_term_from_conv2d_layer(back_layer);
         % ----------------------
         elseif strcmp(back_layer.type, 'fully_connect')
-            net.layers{l}.d = back_layer.d * back_layer.weights';
+            net.layers{l}.d = get_error_term_from_fully_connect_layer(back_layer);
         % -----------------------reshape
         elseif strcmp(back_layer.type, 'reshape')
-            net.layers{l}.d = reshape(back_layer.d, [size(back_layer.d,1), back_layer.input_shape(2:end)]);
+            net.layers{l}.d = get_error_term_from_reshape_layer(back_layer);
         % -------------------------
         elseif strcmp(back_layer.type, 'conv2d_transpose')
             net.layers{l}.d = get_error_term_from_conv2d_transpose_layer(back_layer);
         % -------------------------
         elseif strcmp(back_layer.type, 'sub_sampling')
             net.layers{l}.d = get_error_term_from_sub_sampling_layer(back_layer);
+        % -----------------
         elseif strcmp(back_layer.type, 'atrous_conv2d')
             net.layers{l}.d = get_error_term_from_atrous_conv2d_layer(back_layer);
         % --------------------------wrong layers' type
@@ -33,25 +34,25 @@ function net = nn_bp_d(net, logits, labels)
     end
     %% get every layer's gradient
     for l = 2:n
+        front_a = net.layers{l-1}.a;
         if strcmp(net.layers{l}.type, 'conv2d')
-            [dfilter, dbiases] = calculate_gradient_for_conv2d_layer(net.layers{l-1}.a, net.layers{l});
+            [dfilter, dbiases] = calculate_gradient_for_conv2d_layer(front_a, net.layers{l});
             net.layers{l}.dfilter = dfilter;
             net.layers{l}.dbiases = dbiases;
         elseif strcmp(net.layers{l}.type, 'fully_connect')
-            d = net.layers{l}.d;
-            a = net.layers{l-1}.a;
-            net.layers{l}.dweights = a'*d / size(d, 1);
-            net.layers{l}.dbiases = mean(d, 1);
+            [dweights, dbiases] = calculate_gradient_for_fully_connect_layer(front_a, net.layers{l});
+            net.layers{l}.dweights = dweights;
+            net.layers{l}.dbiases = dbiases;
         elseif strcmp(net.layers{l}.type, 'sub_sampling')
             continue
         elseif strcmp(net.layers{l}.type, 'reshape')
             continue
         elseif strcmp(net.layers{l}.type, 'conv2d_transpose')
-            [dfilter, dbiases] = calculate_gradient_for_conv2d_transpose_layer(net.layers{l-1}.a, net.layers{l});
+            [dfilter, dbiases] = calculate_gradient_for_conv2d_transpose_layer(front_a, net.layers{l});
             net.layers{l}.dfilter = dfilter;
             net.layers{l}.dbiases = dbiases;
         elseif strcmp(net.layers{l}.type, 'atrous_conv2d')
-            [dfilter, dbiases] = calculate_gradient_for_atrous_conv2d_layer(net.layers{l-1}.a, net.layers{l});
+            [dfilter, dbiases] = calculate_gradient_for_atrous_conv2d_layer(front_a, net.layers{l});
             net.layers{l}.dfilter = dfilter;
             net.layers{l}.dbiases = dbiases;
         else 
