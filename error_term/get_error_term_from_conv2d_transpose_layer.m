@@ -11,14 +11,14 @@ function result = get_error_term_from_conv2d_transpose_layer(back_layer)
         % ---------------- valid stride==1
         if back_layer.stride == 1
             for ii = 1:size(filter,3)
-                result(:,:,:,ii) = squeeze(convn(d(:,:,:,:), flip(squeeze(filter(:,:,ii,:)), 3), "valid"));
+                result(:,:,:,ii) = squeeze(convn(d, flipall(squeeze(filter(:,:,ii,:))), "valid"));
             end
         % ----------------- valid stride>1
         else
             shape = [size(d,1)-size(filter,1)+1,size(d,2)-size(filter,2)+1,size(d,3),size(filter,3)];
             temp = zeros(shape);
             for ii = 1:size(filter,3)
-                temp(:,:,:,ii) = squeeze(convn(d(:,:,:,:), flip(squeeze(filter(:,:,ii,:)), 3), "valid"));
+                temp(:,:,:,ii) = squeeze(convn(d, flipall(squeeze(filter(:,:,ii,:))), "valid"));
             end
             result = temp(1:back_layer.stride:end,1:back_layer.stride:end,:,:);
         end
@@ -42,7 +42,7 @@ function result = get_error_term_from_conv2d_transpose_layer(back_layer)
         d = permute(d, [2,3,4,1]);
         % conv 
         for ii = 1:size(filter,3)
-            temp(:,:,:,ii) = squeeze(convn(d(:,:,:,:), flip(squeeze(filter(:,:,ii,:)), 3), "valid"));
+            temp(:,:,:,ii) = squeeze(convn(d, flipall(squeeze(filter(:,:,ii,:))), "valid"));
         end
         
         result = temp(1:back_layer.stride:end, 1:back_layer.stride:end, :, :);

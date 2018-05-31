@@ -10,7 +10,7 @@ function result = get_error_term_from_atrous_conv2d_layer(back_layer)
     result = permute(result, [2,3,1,4]);
     d = permute(d, [2,3,4,1]);
     for ii = 1:size(filter,3)
-        result(:,:,:,ii) =  squeeze(convn(d(:,:,:,:), flip( squeeze( filter(:,:,ii,:) ),3 ), "valid"));
+        result(:,:,:,ii) =  squeeze(convn(d, flipall( squeeze( filter(:,:,ii,:) )), "valid"));
     end
     result = permute(result, [3,1,2,4]);
 end
