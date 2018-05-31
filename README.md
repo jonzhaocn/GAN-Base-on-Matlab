@@ -143,3 +143,6 @@ for e=1:epoch
     end
 end
 ```
+## Reference
+1. `https://grzegorzgwardys.wordpress.com/2016/04/22/8/`
+2. `Dumoulin V, Visin F. A guide to convolution arithmetic for deep learning[J]. 2016.`
