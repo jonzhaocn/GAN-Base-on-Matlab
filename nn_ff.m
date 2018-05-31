@@ -7,7 +7,7 @@ function net = nn_ff(net, x)
         if strcmp(net.layers{l}.type, 'conv2d')
             input = net.layers{l-1}.a;
             % conv2d(input, filter, padding)
-            net.layers{l}.z = conv2d(input, net.layers{l}.filter, net.layers{l}.padding);
+            net.layers{l}.z = conv2d(input, net.layers{l});
             % add biases
             for i=1:net.layers{l}.output_maps
                 net.layers{l}.z(:,:,:,i) = net.layers{l}.z(:,:,:,i) + net.layers{l}.biases(1,i);

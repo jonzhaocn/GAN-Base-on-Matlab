@@ -9,8 +9,8 @@ function output = atrous_conv2d(input, layer)
     elseif strcmp(layer.padding, 'same')
         out_height = in_height;
         out_width = in_width;
-        p_top = floor(size(filter,1)/2);
-        p_left = floor(size(filter,2)/2);
+        p_top = layer.padding_shape(1);
+        p_left = layer.padding_shape(2);
         input = padding_height_width_in_array(input, p_top, p_top, p_left, p_left);
     else
         error('padding of atours conv2d should be valid or same');

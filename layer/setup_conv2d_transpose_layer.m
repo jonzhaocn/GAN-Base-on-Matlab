@@ -33,7 +33,11 @@ function layer = setup_conv2d_transpose_layer(input_shape, layer)
                     num2str([out_height, out_width]), num2str(stride * ([in_height, in_width]-1) + kernel_size));
             end
         end
+        layer.padding_shape = [kernel_size-1, kernel_size-1];
     elseif strcmp(layer.padding, 'same')
+        if mod(kernel_size,2)==0
+            error('conv2d transpose layer, padding is same, kernel size should be a odd');
+        end
         % -------same stride=1-----
         if stride == 1
             if ~isequal([in_height, in_width], [out_height, out_width])

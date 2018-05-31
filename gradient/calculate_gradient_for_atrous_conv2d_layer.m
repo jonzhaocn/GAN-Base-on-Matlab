@@ -4,18 +4,9 @@ function [dfilter, dbiases] = calculate_gradient_for_atrous_conv2d_layer(front_a
     filter = insert_zeros_into_filter(filter, layer.rate);
     dfilter = zeros(size(filter));
     dbiases = zeros(size(layer.biases));
-    if strcmp(layer.padding, "valid")
-        % padding
-        p_top = size(filter,1)-1;
-        p_left = size(filter,2)-1;
-        d = padding_height_width_in_array(d, p_top, p_top, p_left, p_left);
-    elseif strcmp(layer.padding, "same")
-        p_top = floor(size(filter,1)/2);
-        p_left = floor(size(filter,2)/2);
-        d = padding_height_width_in_array(d, p_top, p_top, p_left, p_left);
-    else
-        error('padding should be valid or same')
-    end
+    p_top = layer.padding_shape(1);
+    p_left = layer.padding_shape(2);
+    d = padding_height_width_in_array(d, p_top, p_top, p_left, p_left);
     % after being permuted ,a and d will become [height, width, batch_size, channel]
     front_a = permute(front_a, [2,3,1,4]);
     d = permute(d, [2,3,1,4]);

@@ -15,8 +15,8 @@ function output = conv2d_transpose(input, layer)
             out_width = layer.stride * (in_width - 1) + filter_width;
             input = insert_zeros_into_array(input, layer.stride);
         end
-        p_top = size(filter,1)-1;
-        p_left = size(filter,2)-1;
+        p_top = layer.padding_shape(1);
+        p_left = layer.padding_shape(2);
         input = padding_height_width_in_array(input, p_top, p_top, p_left, p_left);
     %-----------same------------------
     elseif strcmp(layer.padding, 'same')

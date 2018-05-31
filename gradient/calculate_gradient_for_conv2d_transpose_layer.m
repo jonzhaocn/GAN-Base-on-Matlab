@@ -15,7 +15,6 @@ function [dfilter, dbiases] = calculate_gradient_for_conv2d_transpose_layer(fron
         for jj = 1:size(filter,4)
             d_j = d(:,:,:,jj);
             for ii = 1:size(filter,3)
-                % 这里需要剪裁
                 dfilter(:,:,ii,jj) = convn(d_j, flipall(front_a(:,:,:,ii)), "valid") / size(d, 3);
             end
             dbiases(1, jj) = sum(d_j(:)) / size(d, 3);

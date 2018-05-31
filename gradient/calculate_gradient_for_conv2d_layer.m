@@ -5,16 +5,10 @@ function [dfilter, dbiases] = calculate_gradient_for_conv2d_layer(front_a, layer
     filter = layer.filter;
     dfilter = zeros(size(filter));
     dbiases = zeros(size(layer.biases));
-    if strcmp(layer.padding, "valid")
-        % empty
-        p_top = size(filter,1)-1;
-        p_left = size(filter,2)-1;
-        d = padding_height_width_in_array(d, p_top, p_top, p_left, p_left);
-    elseif strcmp(layer.padding, "same")
-        p_top = floor(size(filter,1)/2);
-        p_left = floor(size(filter,2)/2);
-        d = padding_height_width_in_array(d, p_top, p_top, p_left, p_left);
-    end
+    % padding
+    p_top = layer.padding_shape(1);
+    p_left = layer.padding_shape(2);
+    d = padding_height_width_in_array(d, p_top, p_top, p_left, p_left);
     % after being permuted ,a and d will become [height, width, batch_size, channel]
     front_a = permute(front_a, [2,3,1,4]);
     d = permute(d, [2,3,1,4]);
