@@ -1,4 +1,8 @@
 function layer = setup_conv2d_transpose_layer(input_shape, layer)
+    % --------check field names
+    required_fields = {'type', 'kernel_size', 'output_shape', 'stride', 'padding'};
+    optional_fields = {'activation'};
+    check_layer_field_names(layer, required_fields, optional_fields);
     % ----------init-------------
     layer.input_shape = input_shape;
     output_shape = layer.output_shape;
@@ -9,28 +13,32 @@ function layer = setup_conv2d_transpose_layer(input_shape, layer)
     out_width = output_shape(3);
     stride = layer.stride;
     kernel_size = layer.kernel_size;
-    % --------check-----------
+    % --------check outputshape-----------
     if strcmp(layer.padding, 'valid')
         if stride == 1
             % valid,stride=1 => full
             if ~isequal([in_height, in_width] + kernel_size - 1, [out_height, out_width])
-                error(['wrong conv2d_transpose output shape,output height width:', num2str([out_height, out_width]), ', should be ', num2str([in_height, in_width] + kernel_size - 1)]);
+                error('conv2d transpose layer:padding is valid, wrong output height/width [%s], output height/width should be [%s]',...
+                    num2str([out_height, out_width]), num2str([in_height, in_width] + kernel_size - 1));
             end
         else
             % i-k should be a multiple of stride
             if ~isequal( mod([in_height, in_width] - kernel_size, stride) , [0, 0])
-                error(['wrong input shape or kernel size, i-k should be a multiple of s', ' i:',num2str([in_height, in_width]), ', k:', num2str(kernel_size), ', stride:', num2str(stride)]);
+                error('conv2d transpose layer: stride>1, padding is valid, wrong input shape or kernel size, input height/width - kernel_size should be a multiple of stride, input height/width is [%s], kernel_size is %d, stride is %d', ...
+                    num2str([in_height, in_width]), kernel_size, stride);
             end
             % if the stride > 1
             if ~isequal(stride * ([in_height, in_width]-1) + kernel_size, [out_height, out_width])
-                error(['wrong output shape,output height width:', num2str([out_height, out_width]), ', should be :',num2str(stride * ([in_height, in_width]-1) + kernel_size)]);
+                error('conv2d transpose layer: stride>1, padding is valid, wrong output height/width: [%s], output height/width should be [%s]',...
+                    num2str([out_height, out_width]), num2str(stride * ([in_height, in_width]-1) + kernel_size));
             end
         end
     elseif strcmp(layer.padding, 'same')
         % -------same stride=1-----
         if stride == 1
             if ~isequal([in_height, in_width], [out_height, out_width])
-                error('wrong output shape')
+                error('conv2d transpose layer: stride==1, padding is same, wrong output height/width [%s], output height/width should be [%s]',...
+                    num2str([out_height, out_width]), num2str([in_height, in_width]));
             end
             % save padding_shape
             layer.padding_shape = [floor(kernel_size/2), floor(kernel_size/2)];
@@ -40,7 +48,7 @@ function layer = setup_conv2d_transpose_layer(input_shape, layer)
             % verify that if we can get the output shape from conving the
             % input
             if ~isequal(ceil([out_height, out_width]/stride), [in_height, in_width])
-                error(['error output shape:', num2str([out_height, out_width])])
+                error(['conv2d transpose layer: stride>1, padding is same, wrong output shape [%s]', num2str([out_height, out_width])])
             end
             % calculate the padding 
             if mod(out_height, stride)==0
@@ -76,7 +84,7 @@ function layer = setup_conv2d_transpose_layer(input_shape, layer)
             a_padding_shape = mod([out_height, out_width] + 2*padding_shape - kernel_size, stride);
             % verify the padding_shape and a_padding_shape are right
             if ~isequal(stride * ([in_height, in_width]-1) + a_padding_shape + kernel_size - 2*padding_shape, [out_height, out_width])
-                error('something wrong in check_conv2d_transpose_shape');
+                error('something wrong in setup conv2d transpose layer function ');
             end
             % padding in top, bottom, left, right
             layer.padding_shape = padding_shape;
@@ -91,7 +99,7 @@ function layer = setup_conv2d_transpose_layer(input_shape, layer)
     elseif numel(input_shape)==4
         input_maps = input_shape(end);
     else
-        error('error input_shape in conv2d transpose layer')
+        error('error input_shape in conv2d transpose layer, dims of input should be 3 or 4, now input shape is [%s]', num2str(input_shape))
     end
     
     layer.filter = normrnd(0, 0.02, kernel_size, kernel_size, input_maps, output_shape(end));
