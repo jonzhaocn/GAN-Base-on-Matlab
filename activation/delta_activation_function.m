@@ -7,6 +7,8 @@ function result = delta_activation_function(layer)
             result = delta_relu(layer.z);
         elseif strcmp(layer.activation, 'leaky_relu')
             result = delta_leaky_relu(layer.z);
+        elseif strcmp(layer.activation, 'tanh')
+            result = delta_tanh(layer.z);
         else
             error('wrong activation function in layer')
         end
