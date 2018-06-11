@@ -2,7 +2,7 @@
 
 ## Example
 ### example_1
-model:
+* network structure:
 ```
 generator.layers = {
     struct('type', 'input', 'output_shape', [batch_size, 100]) 
@@ -21,10 +21,18 @@ discriminator.layers = {
     struct('type', 'fully_connect', 'output_shape', [batch_size, 1], 'activation', 'sigmoid')
 };
 ```
-result:
+* result:
+
+<p align="center">
+    <img src="https://github.com/JZhaoCH/GAN-Base-on-Matlab/blob/master/readme_images/1.png">
+</p>
+
+<p align="center">
+    <img src="https://github.com/JZhaoCH/GAN-Base-on-Matlab/blob/master/readme_images/2.png">
+</p>
 
 ### example_2
-model:
+* network structure:
 ```
 generator.layers = {
     struct('type', 'input', 'output_shape', [batch_size, 100]) 
@@ -39,7 +47,11 @@ discriminator.layers = {
     struct('type', 'fully_connect', 'output_shape', [batch_size, 1], 'activation', 'sigmoid') 
 };
 ```
-result:
+* result:
+
+<p align="center">
+    <img src="https://github.com/JZhaoCH/GAN-Base-on-Matlab/blob/master/readme_images/3.png">
+</p>
 
 ## Reference
 1. `https://grzegorzgwardys.wordpress.com/2016/04/22/8/`
