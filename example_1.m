@@ -9,24 +9,24 @@ batch_size = 60;
 % ----------- model
 generator.layers = {
     struct('type', 'input', 'output_shape', [batch_size, 100]) 
-    struct('type', 'fully_connect', 'output_shape', [batch_size, 3136], 'activation', 'leaky_relu')
-    struct('type', 'reshape', 'output_shape', [batch_size, 7,7,64])
-    struct('type', 'conv2d_transpose', 'output_shape', [batch_size, 14, 14, 32], 'kernel_size', 5, 'stride', 2, 'padding', 'same', 'activation', 'leaky_relu')
+    struct('type', 'fully_connect', 'output_shape', [batch_size, 7*7*32], 'activation', 'leaky_relu')
+    struct('type', 'reshape', 'output_shape', [batch_size, 7,7,32])
+    struct('type', 'conv2d_transpose', 'output_shape', [batch_size, 14, 14, 16], 'kernel_size', 5, 'stride', 2, 'padding', 'same', 'activation', 'leaky_relu')
     struct('type', 'conv2d_transpose', 'output_shape', [batch_size, 28, 28, 1], 'kernel_size', 5, 'stride', 2, 'padding', 'same', 'activation', 'sigmoid')
 };
 discriminator.layers = {
     struct('type', 'input', 'output_shape', [batch_size, 28, 28, 1])
+    struct('type', 'conv2d', 'output_maps', 16, 'kernel_size', 5, 'padding', 'same', 'activation', 'leaky_relu')
+    struct('type', 'sub_sampling', 'scale', 2)
     struct('type', 'conv2d', 'output_maps', 32, 'kernel_size', 5, 'padding', 'same', 'activation', 'leaky_relu')
     struct('type', 'sub_sampling', 'scale', 2)
-    struct('type', 'conv2d', 'output_maps', 64, 'kernel_size', 5, 'padding', 'same', 'activation', 'leaky_relu')
-    struct('type', 'sub_sampling', 'scale', 2)
-    struct('type', 'reshape', 'output_shape', [batch_size, 3136])
+    struct('type', 'reshape', 'output_shape', [batch_size, 7*7*32])
     struct('type', 'fully_connect', 'output_shape', [batch_size, 1], 'activation', 'sigmoid')
 };
 generator = nn_setup(generator);
 discriminator = nn_setup(discriminator);
 % ----------- setting
-epoch = 100;
+epoch = 20;
 images_num = 60000;
 batch_num = ceil(images_num / batch_size);
 learning_rate = 0.001;
@@ -34,7 +34,9 @@ for e=1:epoch
     kk = randperm(images_num);
     for t=1:batch_num
         % perpare data
-        images_real = train_x(kk((t - 1) * batch_size + 1:t * batch_size), :, :);
+        batch_index_start =  (t - 1) * batch_size + 1;
+        batch_index_end = min(t*batch_size, numel(kk));
+        images_real = train_x(batch_index_start:batch_index_end, :, :);
         noise = unifrnd(-1, 1, batch_size, 100);
         % tranning
         % -----------generator is fixed£¬update discriminator
@@ -58,10 +60,10 @@ for e=1:epoch
         if t == batch_num || mod(t, 100)==0
             c_loss = sigmoid_cross_entropy(logits(1:batch_size), ones(batch_size, 1));
             d_loss = sigmoid_cross_entropy(logits, labels);
-            fprintf('c_loss:"%f",d_loss:"%f"\n',c_loss, d_loss);
+            fprintf('epoch:%d, t:%d, c_loss:"%f",d_loss:"%f"\n', e, t, c_loss, d_loss);
         end
-        if t == batch_num || mod(t, 100)==0
-            path = ['./pics/epoch_',int2str(e),'_t_',int2str(t),'.png'];
+        if t == batch_num || mod(t, 500)==0
+            path = sprintf('./pics/epoch_%d_t_%d.png',e,t);
             save_images(images_fake, [4, 4], path);
             fprintf('save_sample:%s\n', path);
         end

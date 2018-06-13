@@ -1,22 +1,23 @@
-%如果当前层的后一层是反卷积层，进行bp时，需要从反卷积层中获得当前层的残差（error term）
 function result = get_error_term_from_conv2d_transpose_layer(back_layer)
     filter = back_layer.filter;
     % after been permuted, d is [height,width,batch_size,channel]
     d = back_layer.d;
-    result = zeros([size(d,1), back_layer.input_shape(2:end)]);
     if strcmp(back_layer.padding, "valid")
-        % permute
-        d = permute(d, [2,3,4,1]);
-        result = permute(result, [2,3,1,4]);
         % ---------------- valid stride==1
         if back_layer.stride == 1
+            result = zeros([size(d,1), back_layer.input_shape(2:end)]);
+            result = permute(result, [2,3,1,4]);
             for ii = 1:size(filter,3)
                 result(:,:,:,ii) = squeeze(convn(d, flipall(squeeze(filter(:,:,ii,:))), "valid"));
             end
         % ----------------- valid stride>1
         else
-            shape = [size(d,1)-size(filter,1)+1,size(d,2)-size(filter,2)+1,size(d,3),size(filter,3)];
-            temp = zeros(shape);
+            % temp [batch_size, height, width, channel]
+            temp = zeros(size(d,1), size(d,2)-size(filter,1)+1, size(d,3)-size(filter,2)+1, size(filter,3));
+            % after been permute,temp become [height, width, batch_size, channel]
+            temp = permute(temp, [2,3,1,4]);
+            % after been permute,d become [height, width, channel, batch_size]
+            d = permute(d, [2,3,4,1]);
             for ii = 1:size(filter,3)
                 temp(:,:,:,ii) = squeeze(convn(d, flipall(squeeze(filter(:,:,ii,:))), "valid"));
             end
@@ -44,7 +45,6 @@ function result = get_error_term_from_conv2d_transpose_layer(back_layer)
         for ii = 1:size(filter,3)
             temp(:,:,:,ii) = squeeze(convn(d, flipall(squeeze(filter(:,:,ii,:))), "valid"));
         end
-        
         result = temp(1:back_layer.stride:end, 1:back_layer.stride:end, :, :);
     end
     result = permute(result,[3,1,2,4]);

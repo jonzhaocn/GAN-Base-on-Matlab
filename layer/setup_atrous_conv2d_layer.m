@@ -32,8 +32,8 @@ function layer = setup_atrous_conv2d_layer(input_shape, layer)
         error('padding of atours conv2d layer should be valid or same')
     end
     layer.output_shape = [batch_size, out_height, out_width, output_maps];
-    layer.filter = normrnd(0, 0.02, kernel_size, kernel_size, input_maps, output_maps);
-    layer.biases = normrnd(0, 0.02, 1, layer.output_maps);
+    layer.filter = normrnd(0, 0.01, kernel_size, kernel_size, input_maps, output_maps);
+    layer.biases = normrnd(0, 0.01, 1, layer.output_maps);
     layer.filter_m = 0;
     layer.filter_v = 0;
     layer.biases_m = 0;

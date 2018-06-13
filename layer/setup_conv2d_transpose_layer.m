@@ -106,8 +106,8 @@ function layer = setup_conv2d_transpose_layer(input_shape, layer)
         error('error input_shape in conv2d transpose layer, dims of input should be 3 or 4, now input shape is [%s]', num2str(input_shape))
     end
     
-    layer.filter = normrnd(0, 0.02, kernel_size, kernel_size, input_maps, output_shape(end));
-    layer.biases = normrnd(0, 0.02, 1, output_shape(end));
+    layer.filter = normrnd(0, 0.01, kernel_size, kernel_size, input_maps, output_shape(end));
+    layer.biases = normrnd(0, 0.01, 1, output_shape(end));
     layer.filter_m = 0;
     layer.filter_v = 0;
     layer.biases_m = 0;

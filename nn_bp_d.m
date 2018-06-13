@@ -8,7 +8,6 @@ function net = nn_bp_d(net, logits, labels)
     net.layers{n}.d = delta_sigmoid_cross_entropy(logits,labels);
     for l = n-1:-1:2
         back_layer = net.layers{l+1};
-        % ¾í»ýbp²Î¿¼£ºhttps://www.cnblogs.com/tornadomeet/p/3468450.html
         if strcmp(back_layer.type, 'conv2d')
             net.layers{l}.d = get_error_term_from_conv2d_layer(back_layer);
         % ----------------------

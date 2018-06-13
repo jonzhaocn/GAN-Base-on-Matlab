@@ -31,7 +31,9 @@ for e=1:epoch
     kk = randperm(images_num);
     for t=1:batch_num
         % perpare data
-        images_real = train_x(kk((t - 1) * batch_size + 1:t * batch_size), :, :);
+        batch_index_start =  (t - 1) * batch_size + 1;
+        batch_index_end = min(t*batch_size, numel(kk));
+        images_real = train_x(batch_index_start:batch_index_end, :, :);
         noise = unifrnd(-1, 1, batch_size, 100);
         % tranning
         % -----------generator is fixed£¬update discriminator
@@ -55,10 +57,10 @@ for e=1:epoch
         if t == batch_num || mod(t,500)==0
             c_loss = sigmoid_cross_entropy(logits(1:batch_size), ones(batch_size, 1));
             d_loss = sigmoid_cross_entropy(logits, labels);
-            fprintf('c_loss:"%f",d_loss:"%f"\n',c_loss, d_loss);
+            fprintf('epoch:%d, t:%d, c_loss:"%f",d_loss:"%f"\n', e, t, c_loss, d_loss);
         end
         if t == batch_num || mod(t,500)==0
-            path = ['./pics/epoch_',int2str(e),'_t_',int2str(t),'.png'];
+            path = sprintf('./pics/epoch_%d_t_%d.png',e,t);
             save_images(images_fake, [4, 4], path);
             fprintf('save_sample:%s\n', path);
         end
