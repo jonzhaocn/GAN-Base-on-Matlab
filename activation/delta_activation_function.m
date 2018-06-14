@@ -1,16 +1,17 @@
 function result = delta_activation_function(layer)
     result = 1;
     if isfield(layer, 'activation')
-        if strcmp(layer.activation, 'sigmoid')
-            result = delta_sigmoid(layer.z);
-        elseif strcmp(layer.activation, 'relu')
-            result = delta_relu(layer.z);
-        elseif strcmp(layer.activation, 'leaky_relu')
-            result = delta_leaky_relu(layer.z);
-        elseif strcmp(layer.activation, 'tanh')
-            result = delta_tanh(layer.z);
-        else
-            error('wrong activation function in layer')
+        switch layer.activation
+            case 'sigmoid'
+                result = delta_sigmoid(layer.z);
+            case 'relu'
+                result = delta_relu(layer.z);
+            case 'leaky_relu'
+                result = delta_leaky_relu(layer.z);
+            case 'tanh'
+                result = delta_tanh(layer.z);
+            otherwise
+                error('wrong activation function in layer:%s', layer.activation)
         end
     end
 end
