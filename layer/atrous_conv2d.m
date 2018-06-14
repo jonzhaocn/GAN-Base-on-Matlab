@@ -1,11 +1,11 @@
 function output = atrous_conv2d(input, layer)
     filter = layer.filter;
-    [batch_size, in_height, in_width, in_channel] = size(input);
+    [in_height, in_width, in_channel, batch_size] = size(input);
     [filter_height, filter_width, filter_in_channel, out_channel] = size(filter);
-    filter = insert_zeros_into_filter(filter, layer.rate);
+    filter = insert_zeros_into_array(filter, layer.rate);
     if strcmp(layer.padding, 'valid')
-        out_height = in_height - size(filter,1) + 1;
-        out_width = in_width - size(filter,2) + 1;
+        out_height = in_height - filter_height + 1;
+        out_width = in_width - filter_width + 1;
     elseif strcmp(layer.padding, 'same')
         out_height = in_height;
         out_width = in_width;
@@ -15,11 +15,9 @@ function output = atrous_conv2d(input, layer)
     else
         error('padding of atours conv2d should be valid or same');
     end
-    output = zeros(out_height, out_width, batch_size, out_channel);
-    % after permuting, input become [height, width, in_channel, batch_size]
-    input = permute(input,[2,3,4,1]);
-    for jj = size(filter,4)
-        output(:,:,:,jj) = squeeze(convn(input, flip(filter(:,:,:,jj), 3), "valid"));
+    output = zeros(out_height, out_width, out_channel, batch_size);
+    
+    for jj = 1:out_channel
+        output(:,:,jj,:) = convn(input, flip(filter(:,:,:,jj), 3), "valid");
     end
-    output = permute(output, [3,1,2,4]);
 end

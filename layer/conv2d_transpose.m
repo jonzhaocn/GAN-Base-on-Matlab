@@ -1,10 +1,10 @@
-% input, filter both have 4 dims£¬input:[None,height,width,channels],filter:[height,width,input_channels,output_channels]
-% outputshape:[None,height,width,output_channels]
+% input, filter both have 4 dims£¬input:[height,width,channels,batch_size],filter:[height,width,input_channels,output_channels]
+% outputshape:[height,width,output_channels,batch_size]
 function output = conv2d_transpose(input, layer)
     filter = layer.filter;
-    [batch_size,in_height,in_width,in_channel] = size(input);
-    [filter_height,filter_width,filter_in_channel,filter_out_channel] = size(filter);
-    out_channel = layer.output_shape(4);
+    [in_height, in_width, in_channel, batch_size] = size(input);
+    [filter_height, filter_width, filter_in_channel, filter_out_channel] = size(filter);
+    out_channel = layer.output_shape(3);
     % --------------valid--------------
     if strcmp(layer.padding, "valid") 
         if layer.stride == 1
@@ -28,8 +28,8 @@ function output = conv2d_transpose(input, layer)
             p_left = layer.padding_shape(2);
             input = padding_height_width_in_array(input, p_top, p_top, p_left, p_left);
         else
-            out_height = layer.output_shape(2);
-            out_width = layer.output_shape(3);
+            out_height = layer.output_shape(1);
+            out_width = layer.output_shape(2);
             % insert 0 
             input = insert_zeros_into_array(input, layer.stride);
             % padding in top,bottom,left,right
@@ -43,11 +43,8 @@ function output = conv2d_transpose(input, layer)
         error('padding of conv2d transpose should be same or valid')
     end
     
-    % after been permuter input become [height,width,batch_size,channel]
-    input = permute(input,[2,3,4,1]);
-    output = zeros(out_height, out_width, batch_size, out_channel);
+    output = zeros(out_height, out_width, out_channel, batch_size);
     for jj=1:out_channel
-        output(:,:,:,jj) = squeeze(convn(input(:,:,:,:), flip(layer.filter(:,:,:,jj), 3), "valid"));
+        output(:,:,jj,:) = convn(input, flip(layer.filter(:,:,:,jj), 3), "valid");
     end
-    output = permute(output, [3,1,2,4]);
 end

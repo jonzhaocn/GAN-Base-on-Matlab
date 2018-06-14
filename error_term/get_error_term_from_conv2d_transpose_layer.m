@@ -2,24 +2,21 @@ function result = get_error_term_from_conv2d_transpose_layer(back_layer)
     filter = back_layer.filter;
     % after been permuted, d is [height,width,batch_size,channel]
     d = back_layer.d;
+    [d_height, d_width, ~, batch_size] = size(d);
+    [filter_height, filter_width, in_channel, out_channel] = size(filter);
     if strcmp(back_layer.padding, "valid")
         % ---------------- valid stride==1
         if back_layer.stride == 1
-            result = zeros([size(d,1), back_layer.input_shape(2:end)]);
-            result = permute(result, [2,3,1,4]);
+            result = zeros([back_layer.input_shape(1:end-1), batch_size]);
             for ii = 1:size(filter,3)
-                result(:,:,:,ii) = squeeze(convn(d, flipall(squeeze(filter(:,:,ii,:))), "valid"));
+                result(:,:,ii,:) = convn(d, flipall(squeeze(filter(:,:,ii,:))), "valid");
             end
         % ----------------- valid stride>1
         else
-            % temp [batch_size, height, width, channel]
-            temp = zeros(size(d,1), size(d,2)-size(filter,1)+1, size(d,3)-size(filter,2)+1, size(filter,3));
-            % after been permute,temp become [height, width, batch_size, channel]
-            temp = permute(temp, [2,3,1,4]);
-            % after been permute,d become [height, width, channel, batch_size]
-            d = permute(d, [2,3,4,1]);
+            % temp [height, width, channel, batch_size]
+            temp = zeros(d_height-filter_height+1, d_width-filter_width+1, in_channel, batch_size);
             for ii = 1:size(filter,3)
-                temp(:,:,:,ii) = squeeze(convn(d, flipall(squeeze(filter(:,:,ii,:))), "valid"));
+                temp(:,:,ii,:) = convn(d, flipall(squeeze(filter(:,:,ii,:))), "valid");
             end
             result = temp(1:back_layer.stride:end,1:back_layer.stride:end,:,:);
         end
@@ -37,15 +34,12 @@ function result = get_error_term_from_conv2d_transpose_layer(back_layer)
             p_right = p_left - back_layer.a_padding_shape(2);
             d = padding_height_width_in_array(d, p_top, p_bottom, p_left, p_right);
         end
-        temp = zeros(size(d,1), size(d,2)-size(filter,1)+1, size(d,3)-size(filter,2)+1, size(filter,3));
-        temp = permute(temp, [2,3,1,4]);
-        % permute
-        d = permute(d, [2,3,4,1]);
-        % conv 
+        % --
+        [d_height, d_width, ~, ~] = size(d);
+        temp = zeros(d_height-filter_height+1, d_width-filter_width+1, in_channel, batch_size);
         for ii = 1:size(filter,3)
-            temp(:,:,:,ii) = squeeze(convn(d, flipall(squeeze(filter(:,:,ii,:))), "valid"));
+            temp(:,:,ii,:) = convn(d, flipall(squeeze(filter(:,:,ii,:))), "valid");
         end
         result = temp(1:back_layer.stride:end, 1:back_layer.stride:end, :, :);
     end
-    result = permute(result,[3,1,2,4]);
 end

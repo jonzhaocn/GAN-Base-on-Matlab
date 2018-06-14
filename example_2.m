@@ -1,67 +1,24 @@
 clear;
 clc;
-addpath('util', 'activation', 'error_term', 'gradient', 'layer');
+addpath('util', 'activation', 'error_term', 'gradient', 'layer', 'gan');
 % -----------load mnist data
 load('mnist_uint8', 'train_x');
 train_x = double(reshape(train_x, 60000, 28, 28))/255;
-train_x = permute(train_x,[1,3,2]);
+% train_x:[height, width, channel, images_index]
+train_x = permute(train_x,[3,2,4,1]);
 batch_size = 60;
 % ---------- model
 generator.layers = {
-    struct('type', 'input', 'output_shape', [batch_size, 100]) 
-    struct('type', 'fully_connect', 'output_shape', [batch_size, 1024], 'activation', 'leaky_relu')
-    struct('type', 'fully_connect', 'output_shape', [batch_size, 28*28], 'activation', 'sigmoid') 
-    struct('type', 'reshape', 'output_shape', [batch_size, 28, 28, 1])
+    struct('type', 'input', 'output_shape', [100, batch_size]) 
+    struct('type', 'fully_connect', 'output_shape', [1024, batch_size], 'activation', 'leaky_relu')
+    struct('type', 'fully_connect', 'output_shape', [28*28, batch_size], 'activation', 'sigmoid') 
+    struct('type', 'reshape', 'output_shape', [28, 28, 1, batch_size])
 };
 discriminator.layers = {
-    struct('type', 'input', 'output_shape', [batch_size, 28,28,1])
-    struct('type', 'reshape', 'output_shape', [batch_size, 28*28]) 
-    struct('type', 'fully_connect', 'output_shape', [batch_size, 1024], 'activation', 'leaky_relu')
-    struct('type', 'fully_connect', 'output_shape', [batch_size, 1], 'activation', 'sigmoid')
+    struct('type', 'input', 'output_shape', [28,28,1, batch_size])
+    struct('type', 'reshape', 'output_shape', [28*28, batch_size])
+    struct('type', 'fully_connect', 'output_shape', [1024, batch_size], 'activation', 'leaky_relu')
+    struct('type', 'fully_connect', 'output_shape', [1, batch_size], 'activation', 'sigmoid')
 };
-generator = nn_setup(generator);
-discriminator = nn_setup(discriminator);
-% -----------setting
-epoch = 100;
-images_num = 60000;
-batch_num = ceil(images_num / batch_size);
-learning_rate = 0.001;
-for e=1:epoch
-    kk = randperm(images_num);
-    for t=1:batch_num
-        % perpare data
-        batch_index_start =  (t - 1) * batch_size + 1;
-        batch_index_end = min(t*batch_size, numel(kk));
-        images_real = train_x(batch_index_start:batch_index_end, :, :);
-        noise = unifrnd(-1, 1, batch_size, 100);
-        % tranning
-        % -----------generator is fixed£¬update discriminator
-        generator = nn_ff(generator, noise);
-        images_fake = generator.layers{end}.a;
-        discriminator = nn_ff(discriminator, images_fake);
-        logits_fake = discriminator.layers{end}.z;
-        discriminator = nn_bp_d(discriminator, logits_fake, ones(batch_size, 1));
-        generator = nn_bp_g(generator, discriminator);
-        generator = nn_applygrads_adam(generator, learning_rate);
-        % -----------discriminator is fixed£¬update generator
-        generator = nn_ff(generator, noise);
-        images_fake = generator.layers{end}.a;
-        images = [images_fake;images_real];
-        discriminator = nn_ff(discriminator, images);
-        logits = discriminator.layers{end}.z;
-        labels = [zeros(batch_size,1);ones(batch_size,1)];
-        discriminator = nn_bp_d(discriminator, logits, labels);
-        discriminator = nn_applygrads_adam(discriminator, learning_rate);
-        % ----------------output loss
-        if t == batch_num || mod(t, 100)==0
-            c_loss = sigmoid_cross_entropy(logits(1:batch_size), ones(batch_size, 1));
-            d_loss = sigmoid_cross_entropy(logits, labels);
-            fprintf('epoch:%d, t:%d, c_loss:"%f",d_loss:"%f"\n', e, t, c_loss, d_loss);
-        end
-        if t == batch_num || mod(t, 500)==0
-            path = sprintf('./pics/epoch_%d_t_%d.png',e,t);
-            save_images(images_fake, [4, 4], path);
-            fprintf('save_sample:%s\n', path);
-        end
-    end
-end
+args = struct('batch_size', batch_size, 'epoch', 10, 'learning_rate', 0.001, 'optimizer', 'adam');
+[generator, discriminator] = gan_train(generator, discriminator, train_x, args);

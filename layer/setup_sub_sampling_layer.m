@@ -6,5 +6,5 @@ function layer = setup_sub_sampling_layer(input_shape, layer)
     % -------- set
     layer.input_shape = input_shape;
     layer.output_shape = input_shape;
-    layer.output_shape(2:3) = floor(layer.output_shape(2:3)/layer.scale);
+    layer.output_shape(1:2) = floor(layer.output_shape(1:2)/layer.scale);
 end

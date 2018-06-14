@@ -10,13 +10,8 @@ function layer = setup_atrous_conv2d_layer(input_shape, layer)
     output_maps = layer.output_maps;
     %--------setting
     layer.input_shape = input_shape;
-    if numel(input_shape)==3
-        input_maps = 1;
-    elseif numel(input_shape)==4
-        input_maps = input_shape(end);
-    else
-        error('wrong input shape in atrous conv2d ayer,dims of input should be 3 or 4,now input shape is [%s]', num2str(input_shape));
-    end
+    input_maps = input_shape(3);
+    % --
     if strcmp(layer.padding, "valid")
         out_height = input_shape(2) - (kernel_size+(kernel_size-1)*(rate-1)) + 1;
         out_width = input_shape(3) - (kernel_size + (kernel_size-1)*(rate-1)) + 1; 
