@@ -1,4 +1,6 @@
 function [generator, discriminator] = gan_train(g_structure, d_structure, train_images, args)
+    % ------
+    setup_environment();
     % ----------- setting
     options.epoch = 1;
     options.batch_size = 10;

@@ -17,17 +17,11 @@ function [dfilter, dbiases] = calculate_gradient_for_conv2d_transpose_layer(fron
         case 'same'
             if stride == 1
                 % padding d
-                p_top = layer.padding_shape(1);
-                p_left = layer.padding_shape(2);
-                d = padding_height_width_in_array(d, p_top, p_top, p_left, p_left);
+                d = padding_height_width_in_array(d, layer.padding_shape);
             else
                 % insert 0 into a
                 front_a = insert_zeros_into_array(front_a, layer.stride);
-                p_top = layer.padding_shape(1);
-                p_left = layer.padding_shape(2);
-                p_bottom = p_top - layer.a_padding_shape(1);
-                p_right = p_left - layer.a_padding_shape(2);
-                d = padding_height_width_in_array(d, p_top, p_bottom, p_left, p_right);
+                d = padding_height_width_in_array(d, layer.padding_shape-layer.a_padding_shape);
             end
         otherwise
             error('padding only support valid or same')

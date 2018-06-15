@@ -15,28 +15,20 @@ function output = conv2d_transpose(input, layer)
                 out_width = layer.stride * (in_width - 1) + filter_width;
                 input = insert_zeros_into_array(input, layer.stride);
             end
-            p_top = layer.padding_shape(1);
-            p_left = layer.padding_shape(2);
-            input = padding_height_width_in_array(input, p_top, p_top, p_left, p_left);
+            input = padding_height_width_in_array(input, layer.padding_shape);
         case 'same'
             if layer.stride == 1
                 % kernel size should be a odd
                 out_height = in_height;
                 out_width = in_width;
-                p_top = layer.padding_shape(1);
-                p_left = layer.padding_shape(2);
-                input = padding_height_width_in_array(input, p_top, p_top, p_left, p_left);
+                input = padding_height_width_in_array(input, layer.padding_shape);
             else
                 out_height = layer.output_shape(1);
                 out_width = layer.output_shape(2);
                 % insert 0
                 input = insert_zeros_into_array(input, layer.stride);
                 % padding in top,bottom,left,right
-                p_top = layer.padding_shape(1);
-                p_left = layer.padding_shape(2);
-                a_p_bottom = layer.a_padding_shape(1);
-                a_p_right = layer.a_padding_shape(2);
-                input = padding_height_width_in_array(input, p_top, p_top+a_p_bottom, p_left, p_left+a_p_right);
+                input = padding_height_width_in_array(input, layer.padding_shape+layer.a_padding_shape);
             end
         otherwise
             error('padding of conv2d transpose should be same or valid')

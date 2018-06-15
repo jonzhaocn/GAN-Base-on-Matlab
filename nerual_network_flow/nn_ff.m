@@ -1,7 +1,6 @@
 function net = nn_ff(net, x)
     n = numel(net.layers);
     net.layers{1}.a = x;
-    
     for l = 2 : n   %  for each layer
 		input = net.layers{l-1}.a;
         switch net.layers{l}.type

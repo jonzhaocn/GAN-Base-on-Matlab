@@ -16,14 +16,14 @@ function layer = setup_atrous_conv2d_layer(input_shape, layer)
         case 'valid'
             out_height = input_shape(2) - (kernel_size+(kernel_size-1)*(rate-1)) + 1;
             out_width = input_shape(3) - (kernel_size + (kernel_size-1)*(rate-1)) + 1;
-            layer.padding_shape = [kernel_size-1,kernel_size-1];
+            layer.padding_shape = [kernel_size-1, kernel_size-1, kernel_size-1, kernel_size-1];
         case 'same'
             out_height = input_shape(2);
             out_width = input_shape(3);
             if mod(kernel_size,2)==0
                 error('atrous conv2d layer, padding is same, kernel size should be a odd');
             end
-            layer.padding_shape = [floor(kernel_size/2), floor(kernel_size/2)];
+            layer.padding_shape = [floor(kernel_size/2), floor(kernel_size/2), floor(kernel_size/2), floor(kernel_size/2)];
         otherwise
             error('padding of atours conv2d layer should be valid or same')
     end

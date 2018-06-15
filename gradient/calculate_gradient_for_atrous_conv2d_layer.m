@@ -6,9 +6,7 @@ function [dfilter, dbiases] = calculate_gradient_for_atrous_conv2d_layer(front_a
     dbiases = zeros(size(layer.biases));
     batch_size = size(d, 4);
     % padding
-    p_top = layer.padding_shape(1);
-    p_left = layer.padding_shape(2);
-    d = padding_height_width_in_array(d, p_top, p_top, p_left, p_left);
+    d = padding_height_width_in_array(d, layer.padding_shape);
     
     for jj = 1:size(filter,4) %output channel
         d_j = squeeze(d(:,:,jj,:));

@@ -23,15 +23,9 @@ function result = get_error_term_from_conv2d_transpose_layer(back_layer)
             end
         case 'same'
             if back_layer.stride == 1
-                p_top = back_layer.padding_shape(1);
-                p_left = back_layer.padding_shape(2);
-                d = padding_height_width_in_array(d, p_top, p_top, p_left, p_left);
+                d = padding_height_width_in_array(d, back_layer.padding_shape);
             else
-                p_top = back_layer.padding_shape(1);
-                p_left = back_layer.padding_shape(2);
-                p_bottom = p_top - back_layer.a_padding_shape(1);
-                p_right = p_left - back_layer.a_padding_shape(2);
-                d = padding_height_width_in_array(d, p_top, p_bottom, p_left, p_right);
+                d = padding_height_width_in_array(d, back_layer.padding_shape - back_layer.a_padding_shape);
             end
             % --
             [d_height, d_width, ~, ~] = size(d);

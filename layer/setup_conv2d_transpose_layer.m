@@ -39,7 +39,7 @@ function layer = setup_conv2d_transpose_layer(input_shape, layer)
                         num2str([out_height, out_width]), num2str(stride * ([in_height, in_width]-1) + kernel_size));
                 end
             end
-            layer.padding_shape = [kernel_size-1, kernel_size-1];
+            layer.padding_shape = [kernel_size-1, kernel_size-1, kernel_size-1, kernel_size-1];
         % -------same---------    
         case 'same'
             if mod(kernel_size,2)==0
@@ -50,7 +50,7 @@ function layer = setup_conv2d_transpose_layer(input_shape, layer)
                     error('conv2d transpose layer: stride==1, padding is same, wrong output height/width [%s], output height/width should be [%s]',...
                         num2str([out_height, out_width]), num2str([in_height, in_width]));
                 end
-                layer.padding_shape = [floor(kernel_size/2), floor(kernel_size/2)];
+                layer.padding_shape = [floor(kernel_size/2), floor(kernel_size/2), floor(kernel_size/2), floor(kernel_size/2)];
             else
                 % https://www.tensorflow.org/versions/master/api_guides/python/nn#Convolution
                 % verify that if we can get the output shape from conving the
@@ -87,16 +87,17 @@ function layer = setup_conv2d_transpose_layer(input_shape, layer)
                 end
                 % p is the padding in top,bottom,left,right, top=bottom,
                 % left=right
-                padding_shape = [pad_along_height/2, pad_along_width/2];
+                padding_shape = [pad_along_height/2, pad_along_height/2, pad_along_width/2, pad_along_width/2];
                 % a_padding_shape is the padding in right and bottom
-                a_padding_shape = mod([out_height, out_width] + 2*padding_shape - kernel_size, stride);
+                a_padding_shape_bottom = mod(out_height + pad_along_height - kernel_size, stride);
+                a_padding_shape_right = mod(out_width + pad_along_width - kernel_size, stride);
                 % verify the padding_shape and a_padding_shape are right
-                if ~isequal(stride * ([in_height, in_width]-1) + a_padding_shape + kernel_size - 2*padding_shape, [out_height, out_width])
+                if ~isequal(stride * ([in_height, in_width]-1) + [a_padding_shape_bottom, a_padding_shape_right] + kernel_size - [pad_along_height, pad_along_width], [out_height, out_width])
                     error('something wrong in setup conv2d transpose layer function ');
                 end
                 % padding in top, bottom, left, right
                 layer.padding_shape = padding_shape;
-                layer.a_padding_shape = a_padding_shape;
+                layer.a_padding_shape = [0, a_padding_shape_bottom, 0, a_padding_shape_right];
             end
         otherwise
             error('padding of conv2_transpose:only support valid or same');

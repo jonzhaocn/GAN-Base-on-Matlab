@@ -1,6 +1,5 @@
 clear;
 clc;
-addpath('util', 'activation', 'error_term', 'gradient', 'layer', 'gan');
 % -----------load mnist data
 load('mnist_uint8', 'train_x');
 train_x = double(reshape(train_x, 60000, 28, 28))/255;

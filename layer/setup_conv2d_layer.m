@@ -17,14 +17,14 @@ function layer = setup_conv2d_layer(input_shape, layer)
         case 'valid'
             out_height = in_height - kernel_size + 1;
             out_width = in_width - kernel_size + 1;
-            layer.padding_shape = [kernel_size-1, kernel_size-1];
+            layer.padding_shape = [kernel_size-1, kernel_size-1, kernel_size-1, kernel_size-1];
         case 'same'
             out_height = in_height;
             out_width = in_width;
             if mod(kernel_size,2)==0
                 error('conv2d padding is same, kernel size should be a odd')
             end
-            layer.padding_shape = [floor(kernel_size/2), floor(kernel_size/2)];
+            layer.padding_shape = [floor(kernel_size/2), floor(kernel_size/2), floor(kernel_size/2), floor(kernel_size/2)];
         otherwise
             error('padding of conv2d layer should be valid or same')
     end

@@ -10,9 +10,7 @@ function output = atrous_conv2d(input, layer)
         case 'same'
             out_height = in_height;
             out_width = in_width;
-            p_top = layer.padding_shape(1);
-            p_left = layer.padding_shape(2);
-            input = padding_height_width_in_array(input, p_top, p_top, p_left, p_left);
+            input = padding_height_width_in_array(input, layer.padding_shape);
         otherwise
             error('padding of atours conv2d should be valid or same');
     end
