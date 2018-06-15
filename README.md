@@ -5,20 +5,20 @@
 * network structure:
 ```
 generator.layers = {
-    struct('type', 'input', 'output_shape', [batch_size, 100]) 
-    struct('type', 'fully_connect', 'output_shape', [batch_size, 3136], 'activation', 'leaky_relu')
-    struct('type', 'reshape', 'output_shape', [batch_size, 7,7,64])
-    struct('type', 'conv2d_transpose', 'output_shape', [batch_size, 14, 14, 32], 'kernel_size', 5, 'stride', 2, 'padding', 'same', 'activation', 'leaky_relu')
-    struct('type', 'conv2d_transpose', 'output_shape', [batch_size, 28, 28, 1], 'kernel_size', 5, 'stride', 2, 'padding', 'same', 'activation', 'sigmoid')
+    struct('type', 'input', 'output_shape', [100, batch_size]) 
+    struct('type', 'fully_connect', 'output_shape', [3136, batch_size], 'activation', 'leaky_relu')
+    struct('type', 'reshape', 'output_shape', [7,7,64, batch_size])
+    struct('type', 'conv2d_transpose', 'output_shape', [14, 14, 32, batch_size], 'kernel_size', 5, 'stride', 2, 'padding', 'same', 'activation', 'leaky_relu')
+    struct('type', 'conv2d_transpose', 'output_shape', [28, 28, 1, batch_size], 'kernel_size', 5, 'stride', 2, 'padding', 'same', 'activation', 'sigmoid')
 };
 discriminator.layers = {
-    struct('type', 'input', 'output_shape', [batch_size, 28, 28, 1])
+    struct('type', 'input', 'output_shape', [28, 28, 1, batch_size])
     struct('type', 'conv2d', 'output_maps', 32, 'kernel_size', 5, 'padding', 'same', 'activation', 'leaky_relu')
     struct('type', 'sub_sampling', 'scale', 2)
     struct('type', 'conv2d', 'output_maps', 64, 'kernel_size', 5, 'padding', 'same', 'activation', 'leaky_relu')
     struct('type', 'sub_sampling', 'scale', 2)
-    struct('type', 'reshape', 'output_shape', [batch_size, 3136])
-    struct('type', 'fully_connect', 'output_shape', [batch_size, 1], 'activation', 'sigmoid')
+    struct('type', 'reshape', 'output_shape', [3136, batch_size])
+    struct('type', 'fully_connect', 'output_shape', [1, batch_size], 'activation', 'sigmoid')
 };
 ```
 * result:
@@ -35,16 +35,16 @@ discriminator.layers = {
 * network structure:
 ```
 generator.layers = {
-    struct('type', 'input', 'output_shape', [batch_size, 100]) 
-    struct('type', 'fully_connect', 'output_shape', [batch_size, 1024], 'activation', 'relu')
-    struct('type', 'fully_connect', 'output_shape', [batch_size, 28*28], 'activation', 'sigmoid') 
-    struct('type', 'reshape', 'output_shape', [batch_size, 28, 28, 1])
+    struct('type', 'input', 'output_shape', [100, batch_size]) 
+    struct('type', 'fully_connect', 'output_shape', [1024, batch_size], 'activation', 'relu')
+    struct('type', 'fully_connect', 'output_shape', [28*28, batch_size], 'activation', 'sigmoid') 
+    struct('type', 'reshape', 'output_shape', [28, 28, 1, batch_size])
 };
 discriminator.layers = {
-    struct('type', 'input', 'output_shape', [batch_size, 28,28,1])
-    struct('type', 'reshape', 'output_shape', [batch_size, 28*28]) 
-    struct('type', 'fully_connect', 'output_shape', [batch_size, 1024], 'activation', 'relu')
-    struct('type', 'fully_connect', 'output_shape', [batch_size, 1], 'activation', 'sigmoid') 
+    struct('type', 'input', 'output_shape', [28,28,1, batch_size])
+    struct('type', 'reshape', 'output_shape', [28*28, batch_size]) 
+    struct('type', 'fully_connect', 'output_shape', [1024, batch_size], 'activation', 'relu')
+    struct('type', 'fully_connect', 'output_shape', [1, batch_size], 'activation', 'sigmoid') 
 };
 ```
 * result:
@@ -57,3 +57,4 @@ discriminator.layers = {
 1. `https://grzegorzgwardys.wordpress.com/2016/04/22/8/`
 2. `Dumoulin V, Visin F. A guide to convolution arithmetic for deep learning[J]. 2016.`
 3. `https://github.com/rasmusbergpalm/DeepLearnToolbox/tree/master/CNN`
+4. `http://neuralnetworksanddeeplearning.com/index.html`
