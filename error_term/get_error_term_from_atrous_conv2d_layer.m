@@ -1,3 +1,4 @@
+% get error term for atrous conv2d layer with respect to current layer's output
 function result = get_error_term_from_atrous_conv2d_layer(back_layer)
     filter = insert_zeros_into_filter(back_layer.filter, back_layer.rate);
     d = back_layer.d;

@@ -21,6 +21,8 @@ function net = nn_bp_d(net, logits, labels)
                 net.layers{l}.d = get_error_term_from_sub_sampling_layer(back_layer);
             case 'atrous_conv2d'
                 net.layers{l}.d = get_error_term_from_atrous_conv2d_layer(back_layer);
+            case 'batch_norm'
+                net.layers{l}.d = get_error_term_from_batch_norm_layer(back_layer);
             otherwise
                 error('wrong net.layers.type %s', back_layer.type);
         end
@@ -45,6 +47,10 @@ function net = nn_bp_d(net, logits, labels)
             case 'atrous_conv2d'
                 [dfilter, dbiases] = calculate_gradient_for_atrous_conv2d_layer(front_a, net.layers{l});
                 net.layers{l}.dfilter = dfilter;
+                net.layers{l}.dbiases = dbiases;
+            case 'batch_norm'
+                [dweights, dbiases] = calculate_gradient_for_batch_norm_layer(front_a, net.layers{l});
+                net.layers{l}.dweights = dweights;
                 net.layers{l}.dbiases = dbiases;
             case {'sub_sampling', 'reshape'}
                 continue

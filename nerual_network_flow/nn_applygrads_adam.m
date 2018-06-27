@@ -15,7 +15,7 @@ function net = nn_applygrads_adam(net, learning_rate)
                 net.layers{l}.biases_m = beta1 * net.layers{l}.biases_m + (1-beta1) * dbiases;
                 net.layers{l}.biases_v = beta2 * net.layers{l}.biases_v + (1-beta2) * (dbiases .* dbiases);
                 net.layers{l}.biases = net.layers{l}.biases - lr * net.layers{l}.biases_m ./ (sqrt(net.layers{l}.biases_v) + net.epsilon);
-            case 'fully_connect'
+            case {'fully_connect', 'batch_norm'}
                 dweights = net.layers{l}.dweights;
                 dbiases = net.layers{l}.dbiases;
                 net.layers{l}.weights_m = beta1 * net.layers{l}.weights_m + (1-beta1) * dweights;

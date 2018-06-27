@@ -20,6 +20,8 @@ function generator = nn_bp_g(generator, discriminator)
                 generator.layers{l}.d = get_error_term_from_sub_sampling_layer(back_layer);
             case 'atrous_conv2d'
                 generator.layers{l}.d = get_error_term_from_atrous_conv2d_layer(back_layer);
+            case 'batch_norm'
+                generator.layers{l}.d = get_error_term_from_batch_norm_layer(back_layer);
             otherwise
                 error('error net.layers{l}.type:%s', back_layer.type);
         end
@@ -46,6 +48,10 @@ function generator = nn_bp_g(generator, discriminator)
             case 'atrous_conv2d'
                 [dfilter, dbiases] = calculate_gradient_for_atrous_conv2d_layer(front_a, generator.layers{l});
                 generator.layers{l}.dfilter = dfilter;
+                generator.layers{l}.dbiases = dbiases;
+            case 'batch_norm'
+                [dweights, dbiases] = calculate_gradient_for_batch_norm_layer(front_a, generator.layers{l});
+                generator.layers{l}.dweights = dweights;
                 generator.layers{l}.dbiases = dbiases;
             otherwise
                 error('error net.layers{l}.type:%s',generator.layers{l}.type);

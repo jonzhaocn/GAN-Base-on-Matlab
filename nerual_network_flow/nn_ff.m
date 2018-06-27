@@ -25,6 +25,8 @@ function net = nn_ff(net, x)
                 for i=1:net.layers{l}.output_maps
                     net.layers{l}.z(:,:,i,:) = net.layers{l}.z(:,:,i,:) + net.layers{l}.biases(1,i);
                 end
+            case 'batch_norm'
+               net.layers{l} = batch_norm(input, net.layers{l});
             otherwise
                 error('wrong layer type:%s', net.layers{l}.type)
         end

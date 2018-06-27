@@ -18,6 +18,8 @@ function net = nn_setup(net)
                 net.layers{l} = setup_conv2d_transpose_layer(input_shape, net.layers{l});
             case 'atrous_conv2d'
                 net.layers{l} = setup_atrous_conv2d_layer(input_shape, net.layers{l});
+            case 'batch_norm'
+                net.layers{l} = setup_batch_norm_layer(input_shape, net.layers{l});
             otherwise
                 error('wrong layer type:%s', net.layers{l}.type)
         end

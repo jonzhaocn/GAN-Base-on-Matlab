@@ -6,7 +6,7 @@ function layer = setup_atrous_conv2d_layer(input_shape, layer)
     %--------init
     kernel_size = layer.kernel_size;
     rate = layer.rate;
-    batch_size = input_shape(1);
+    batch_size = input_shape(4);
     output_maps = layer.output_maps;
     %--------setting
     layer.input_shape = input_shape;
