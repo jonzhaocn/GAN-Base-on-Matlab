@@ -31,6 +31,6 @@ function [dweights, dbiases] = calculate_gradient_for_conv2d_transpose_layer(fro
         for ii = 1:size(weights,3)
             dweights(:,:,ii,jj) = squeeze(convn(d_j, flipall( squeeze(front_a(:,:,ii,:)) ), "valid")) / batch_size;
         end
-        dbiases(1, jj) = sum(d_j(:)) / batch_size;
+        dbiases(jj, 1) = sum(d_j(:)) / batch_size;
     end
 end

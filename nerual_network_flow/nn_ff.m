@@ -7,7 +7,7 @@ function net = nn_ff(net, x)
             case 'conv2d'
                 net.layers{l}.z = conv2d(input, net.layers{l});
                 for i=1:net.layers{l}.output_maps
-                    net.layers{l}.z(:,:,i,:) = net.layers{l}.z(:,:,i,:) + net.layers{l}.biases(1,i);
+                    net.layers{l}.z(:,:,i,:) = net.layers{l}.z(:,:,i,:) + net.layers{l}.biases(i, 1);
                 end
             case 'sub_sampling'
                 net.layers{l}.z = sub_sample(input, net.layers{l}.scale);
@@ -18,12 +18,12 @@ function net = nn_ff(net, x)
             case 'conv2d_transpose'
                 net.layers{l}.z = conv2d_transpose(input, net.layers{l});
                 for i=1:net.layers{l}.output_shape(3)
-                    net.layers{l}.z(:,:,i,:) = net.layers{l}.z(:,:,i,:) + net.layers{l}.biases(1,i);
+                    net.layers{l}.z(:,:,i,:) = net.layers{l}.z(:,:,i,:) + net.layers{l}.biases(i, 1);
                 end
             case 'atrous_conv2d'
                 net.layers{l}.z = atrous_conv2d(input, net.layers{l});
                 for i=1:net.layers{l}.output_maps
-                    net.layers{l}.z(:,:,i,:) = net.layers{l}.z(:,:,i,:) + net.layers{l}.biases(1,i);
+                    net.layers{l}.z(:,:,i,:) = net.layers{l}.z(:,:,i,:) + net.layers{l}.biases(i, 1);
                 end
             case 'batch_norm'
                net.layers{l} = batch_norm(input, net.layers{l});

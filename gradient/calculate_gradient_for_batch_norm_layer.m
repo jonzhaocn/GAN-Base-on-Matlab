@@ -18,6 +18,6 @@ function [dweights, dbiases] = calculate_gradient_for_batch_norm_layer(front_a, 
         d_i = d(:,:,i,:);
         temp = d_i .* input_hat(:,:,i,:);
         dweights(i) = sum(temp(:));
-        dbiases(i) = sum(d_i(i));
+        dbiases(i, 1) = sum(d_i(i));
     end
 end

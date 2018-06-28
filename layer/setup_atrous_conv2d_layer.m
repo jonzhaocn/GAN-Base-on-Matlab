@@ -29,7 +29,7 @@ function layer = setup_atrous_conv2d_layer(input_shape, layer)
     end
     layer.output_shape = [batch_size, out_height, out_width, output_maps];
     layer.weights = normrnd(0, 0.01, kernel_size, kernel_size, input_maps, output_maps);
-    layer.biases = normrnd(0, 0.01, 1, layer.output_maps);
+    layer.biases = normrnd(0, 0.01, layer.output_maps, 1);
     layer.weights_m = 0;
     layer.weights_v = 0;
     layer.biases_m = 0;

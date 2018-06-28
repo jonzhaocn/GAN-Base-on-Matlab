@@ -13,7 +13,7 @@ function [dweights, dbiases] = calculate_gradient_for_atrous_conv2d_layer(front_
         for ii=1:size(weights,3) % input channel
             dweights(:,:,ii,jj) =  squeeze(convn(d_j, flipall( squeeze(front_a(:,:,ii,:)) ), "valid")) / batch_size;
         end
-        dbiases(1,jj) = sum(d_j(:)) / batch_size;
+        dbiases(jj, 1) = sum(d_j(:)) / batch_size;
     end
     dweights = dweights(1:layer.rate:end,1:layer.rate:end,:,:);
 end

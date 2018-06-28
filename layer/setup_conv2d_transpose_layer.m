@@ -103,7 +103,7 @@ function layer = setup_conv2d_transpose_layer(input_shape, layer)
             error('padding of conv2_transpose:only support valid or same');
     end    
     layer.weights = normrnd(0, 0.01, kernel_size, kernel_size, input_maps, output_maps);
-    layer.biases = normrnd(0, 0.01, 1, output_maps);
+    layer.biases = normrnd(0, 0.01, output_maps, 1);
     layer.weights_m = 0;
     layer.weights_v = 0;
     layer.biases_m = 0;

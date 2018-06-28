@@ -24,7 +24,7 @@ function layer = batch_norm(input, layer)
     % ----
     for i=1:input_maps
         input_hat(:,:,i,:) = (input(:,:,i,:) - mus(i)) / sqrt(sigma2s(i) + layer.epslion);
-        output(:,:,i,:) = layer.weights(i) * input_hat(:,:,i,:) + layer.biases(i);
+        output(:,:,i,:) = layer.weights(i) * input_hat(:,:,i,:) + layer.biases(i, 1);
     end
     % ----
     layer.input = squeeze(input);
