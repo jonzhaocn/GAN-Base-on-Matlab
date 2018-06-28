@@ -10,7 +10,6 @@ batch_size = 60;
 generator.layers = {
     struct('type', 'input', 'output_shape', [100, batch_size]) 
     struct('type', 'fully_connect', 'output_shape', [28*28*6, batch_size])
-    struct('type', 'batch_norm', 'activation', 'leaky_relu')
     struct('type', 'reshape', 'output_shape', [28, 28, 6, batch_size])
     struct('type', 'conv2d', 'kernel_size', 5, 'output_maps', 3, 'padding', 'same')
     struct('type', 'batch_norm', 'activation', 'leaky_relu')

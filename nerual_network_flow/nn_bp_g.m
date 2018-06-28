@@ -32,8 +32,8 @@ function generator = nn_bp_g(generator, discriminator)
         front_a = generator.layers{l-1}.a;
         switch generator.layers{l}.type
             case 'conv2d'
-                [dfilter, dbiases] = calculate_gradient_for_conv2d_layer(front_a, generator.layers{l});
-                generator.layers{l}.dfilter = dfilter;
+                [dweights, dbiases] = calculate_gradient_for_conv2d_layer(front_a, generator.layers{l});
+                generator.layers{l}.dweights = dweights;
                 generator.layers{l}.dbiases = dbiases;
             case 'fully_connect'
                 [dweights, dbiases] = calculate_gradient_for_fully_connect_layer(front_a, generator.layers{l});
@@ -42,12 +42,12 @@ function generator = nn_bp_g(generator, discriminator)
             case {'reshape', 'sub_sampling'}
                 continue
             case 'conv2d_transpose'
-                [dfilter, dbiases] = calculate_gradient_for_conv2d_transpose_layer(front_a, generator.layers{l});
-                generator.layers{l}.dfilter = dfilter;
+                [dweights, dbiases] = calculate_gradient_for_conv2d_transpose_layer(front_a, generator.layers{l});
+                generator.layers{l}.dweights = dweights;
                 generator.layers{l}.dbiases = dbiases;
             case 'atrous_conv2d'
-                [dfilter, dbiases] = calculate_gradient_for_atrous_conv2d_layer(front_a, generator.layers{l});
-                generator.layers{l}.dfilter = dfilter;
+                [dweights, dbiases] = calculate_gradient_for_atrous_conv2d_layer(front_a, generator.layers{l});
+                generator.layers{l}.dweights = dweights;
                 generator.layers{l}.dbiases = dbiases;
             case 'batch_norm'
                 [dweights, dbiases] = calculate_gradient_for_batch_norm_layer(front_a, generator.layers{l});

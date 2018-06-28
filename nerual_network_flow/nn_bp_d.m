@@ -33,20 +33,20 @@ function net = nn_bp_d(net, logits, labels)
         front_a = net.layers{l-1}.a;
         switch net.layers{l}.type
             case 'conv2d'
-                [dfilter, dbiases] = calculate_gradient_for_conv2d_layer(front_a, net.layers{l});
-                net.layers{l}.dfilter = dfilter;
+                [dweights, dbiases] = calculate_gradient_for_conv2d_layer(front_a, net.layers{l});
+                net.layers{l}.dweights = dweights;
                 net.layers{l}.dbiases = dbiases;
             case 'fully_connect'
                 [dweights, dbiases] = calculate_gradient_for_fully_connect_layer(front_a, net.layers{l});
                 net.layers{l}.dweights = dweights;
                 net.layers{l}.dbiases = dbiases;
             case 'conv2d_transpose'
-                [dfilter, dbiases] = calculate_gradient_for_conv2d_transpose_layer(front_a, net.layers{l});
-                net.layers{l}.dfilter = dfilter;
+                [dweights, dbiases] = calculate_gradient_for_conv2d_transpose_layer(front_a, net.layers{l});
+                net.layers{l}.dweights = dweights;
                 net.layers{l}.dbiases = dbiases;
             case 'atrous_conv2d'
-                [dfilter, dbiases] = calculate_gradient_for_atrous_conv2d_layer(front_a, net.layers{l});
-                net.layers{l}.dfilter = dfilter;
+                [dweights, dbiases] = calculate_gradient_for_atrous_conv2d_layer(front_a, net.layers{l});
+                net.layers{l}.dweights = dweights;
                 net.layers{l}.dbiases = dbiases;
             case 'batch_norm'
                 [dweights, dbiases] = calculate_gradient_for_batch_norm_layer(front_a, net.layers{l});

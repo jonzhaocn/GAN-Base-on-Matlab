@@ -1,8 +1,8 @@
-function [dfilter, dbiases] = calculate_gradient_for_conv2d_transpose_layer(front_a, layer)
+function [dweights, dbiases] = calculate_gradient_for_conv2d_transpose_layer(front_a, layer)
     % ---
     d = layer.d;
-    filter = layer.filter;
-    dfilter = zeros(size(filter));
+    weights = layer.weights;
+    dweights = zeros(size(weights));
     dbiases = zeros(size(layer.biases));
     stride = layer.stride;
     batch_size = size(d, 4);
@@ -26,10 +26,10 @@ function [dfilter, dbiases] = calculate_gradient_for_conv2d_transpose_layer(fron
         otherwise
             error('padding only support valid or same')
     end
-    for jj = 1:size(filter,4)
+    for jj = 1:size(weights,4)
         d_j = squeeze(d(:,:,jj,:));
-        for ii = 1:size(filter,3)
-            dfilter(:,:,ii,jj) = squeeze(convn(d_j, flipall( squeeze(front_a(:,:,ii,:)) ), "valid")) / batch_size;
+        for ii = 1:size(weights,3)
+            dweights(:,:,ii,jj) = squeeze(convn(d_j, flipall( squeeze(front_a(:,:,ii,:)) ), "valid")) / batch_size;
         end
         dbiases(1, jj) = sum(d_j(:)) / batch_size;
     end

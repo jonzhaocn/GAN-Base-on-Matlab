@@ -29,10 +29,10 @@ function layer = setup_conv2d_layer(input_shape, layer)
             error('padding of conv2d layer should be valid or same')
     end
     layer.output_shape = [out_height, out_width, layer.output_maps, batch_size];
-    layer.filter = normrnd(0, 0.01, kernel_size, kernel_size, input_maps, output_maps);
+    layer.weights = normrnd(0, 0.01, kernel_size, kernel_size, input_maps, output_maps);
     layer.biases = normrnd(0, 0.01, 1, output_maps);
-    layer.filter_m = 0;
-    layer.filter_v = 0;
+    layer.weights_m = 0;
+    layer.weights_v = 0;
     layer.biases_m = 0;
     layer.biases_v = 0;
 end
