@@ -10,10 +10,11 @@ function [dweights, dbiases] = calculate_gradient_for_batch_norm_layer(front_a, 
     elseif ndims(input_hat) == 2
         shape = size(input_hat);
         input_hat = reshape(input_hat, shape(1), 1, 1,  shape(2));
+        d = reshape(d, shape(1), 1, 1,  shape(2));
     else
         error('xxx')
     end
-    input_maps = size(front_a, 3);
+    input_maps = size(d, 3);
     for i = 1:input_maps
         d_i = d(:,:,i,:);
         temp = d_i .* input_hat(:,:,i,:);

@@ -25,7 +25,9 @@ function result = get_error_term_from_batch_norm_layer(back_layer)
         temp = der_x_hat(:,:,i,:) .* (input(:,:,i,:) - mus(i)) * (-0.5) * (sigma2s(i) + back_layer.epslion)^(-1.5);
         der_sigma2s(i) = sum(temp(:));
         temp = der_x_hat(:,:,i,:) * (-1/sqrt(sigma2s(i)+back_layer.epslion));
-        der_mu(i) = sum(temp(:));
+        temp2 = -2 * (input(:,:,i,:)-mus(i));
+        temp2 = der_sigma2s(i) * sum(temp2(:)) * (1/m);
+        der_mu(i) = sum(temp(:)) + temp2;
         der_x(:,:,i,:) = der_x_hat(:,:,i,:) * (1/sqrt(sigma2s(i) + back_layer.epslion)) + ...
             der_sigma2s(i) * 2 * (input(:,:,i,:)-mus(i)) * (1/m) + ...
             der_mu(i) * (1/m);
