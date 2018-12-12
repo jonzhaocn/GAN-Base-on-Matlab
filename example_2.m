@@ -5,7 +5,7 @@ load('mnist_uint8', 'train_x');
 train_x = double(reshape(train_x, 60000, 28, 28))/255;
 % train_x:[height, width, channel, images_index]
 train_x = permute(train_x,[3,2,4,1]);
-batch_size = 60;
+batch_size = 64;
 % ---------- model
 generator.layers = {
     struct('type', 'input', 'output_shape', [100, batch_size]) 

@@ -36,7 +36,7 @@ function [generator, discriminator] = gan_train(g_structure, d_structure, train_
             images_fake = generator.layers{end}.a;
             discriminator = nn_ff(discriminator, images_fake);
             logits_fake = discriminator.layers{end}.z;
-            discriminator = nn_bp_d(discriminator, logits_fake, ones(1, options.batch_size));
+            discriminator = nn_bp_d(discriminator, logits_fake, ones(size(logits_fake)));
             generator = nn_bp_g(generator, discriminator);
             generator = nn_applygrads(generator, options.learning_rate);
             % -----------discriminator is fixed£¬update generator
@@ -45,7 +45,8 @@ function [generator, discriminator] = gan_train(g_structure, d_structure, train_
             images = cat(4, images_fake, images_real);
             discriminator = nn_ff(discriminator, images);
             logits = discriminator.layers{end}.z;
-            labels = cat(2, zeros(1, options.batch_size), ones(1, options.batch_size));
+            labels = ones(size(logits));
+            labels(1:size(images_fake, 4)) = 0;
             discriminator = nn_bp_d(discriminator, logits, labels);
             discriminator = nn_applygrads(discriminator, options.learning_rate);
             % ----------------output loss

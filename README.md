@@ -1,5 +1,9 @@
 # GAN-Base-on-Matlab
 
+## data
+### mnist_uint8
+[download link](https://github.com/rasmusbergpalm/DeepLearnToolbox/blob/master/data/mnist_uint8.mat)
+
 ## Example
 ### example_1
 * network structure:
