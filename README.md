@@ -28,11 +28,15 @@ discriminator.layers = {
 * result:
 
 <p align="center">
-    <img src="https://github.com/JZhaoCH/GAN-Base-on-Matlab/blob/master/readme_images/1.png">
+    <a href="/readme_images/1.png" target="_blank">
+        <img src="/readme_images/1.png">
+    </a>
 </p>
 
 <p align="center">
-    <img src="https://github.com/JZhaoCH/GAN-Base-on-Matlab/blob/master/readme_images/2.png">
+    <a href="/readme_images/2.png" target="_blank">
+        <img src="/readme_images/2.png">
+    </a>
 </p>
 
 ### example_2
@@ -54,7 +58,9 @@ discriminator.layers = {
 * result:
 
 <p align="center">
-    <img src="https://github.com/JZhaoCH/GAN-Base-on-Matlab/blob/master/readme_images/3.png">
+    <a href="/readme_images/3.png" target="_blank">
+        <img src="/readme_images/3.png">
+    </a>
 </p>
 
 ## Reference
