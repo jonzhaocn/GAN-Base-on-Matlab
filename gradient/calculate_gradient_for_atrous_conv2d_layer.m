@@ -1,7 +1,7 @@
 function [dweights, dbiases] = calculate_gradient_for_atrous_conv2d_layer(front_a, layer)
     d = layer.d;
     weights = layer.weights;
-    weights = insert_zeros_into_filter(weights, layer.rate);
+    weights = insert_zeros_into_array(weights, layer.rate);
     dweights = zeros(size(weights));
     dbiases = zeros(size(layer.biases));
     batch_size = size(d, 4);

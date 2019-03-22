@@ -6,6 +6,7 @@ function [generator, discriminator] = gan_train(g_structure, d_structure, train_
     options.batch_size = 10;
     options.learning_rate = 0.001;
     options.optimizer = 'sgd';
+    options.results_folder = './results';
     options = argparse(options, args);
     % -----------
     images_count = size(train_images, 4);
@@ -21,6 +22,12 @@ function [generator, discriminator] = gan_train(g_structure, d_structure, train_
     % ----------
     generator = nn_setup(g_structure);
     discriminator = nn_setup(d_structure);
+    
+    % create folder to store generated images
+    if ~exist(options.results_folder, 'dir')
+        mkdir(options.results_folder)
+        fprintf('create folder: %s\n', options.results_folder)
+    end
     
     for e=1:options.epoch
         kk = randperm(images_count);
@@ -56,7 +63,7 @@ function [generator, discriminator] = gan_train(g_structure, d_structure, train_
                 fprintf('epoch:%d, t:%d, c_loss:"%f",d_loss:"%f"\n', e, t, c_loss, d_loss);
             end
             if t == batch_num || mod(t, 100)==0
-                path = sprintf('./pics/epoch_%d_t_%d.png',e,t);
+                path = fullfile(options.results_folder, sprintf('epoch_%d_t_%d.png',e,t));
                 save_images(images_fake, [4, 4], path);
                 fprintf('save_sample:%s\n', path);
             end
